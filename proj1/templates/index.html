@@ -1,17 +1,15 @@
 {% extends "layout.html" %}
 
 {% block body %}
+<h2>Register</h2>
 <form action="/register" method="post">
-    <input type="text" placeholder="First Name">
-    <input type="text" placeholder="Last Name">
+    <input type="text" name="name" placeholder="Name" required>
+    <select name="sport" required>
+        <option disabled selected>Select Sport</option>
+        {% for sport in sports %}
+            <option value="{{sport}}">{{sport}}</option>
+        {% endfor %}
+    </select>
     <button>Submit</button>
 </form>
-<select name="" id="">
-    <option disabled selected>Select Sport</option>
-    <option value="Soccer">Soccer</option>
-    <option value="Basketball">Basketball</option>
-    <option value="Swimming">Swimming</option>
-    <option value="Golf">Golf</option>
-    <option value="Tennis">Tennis</option>
-</select>
 {% endblock %}

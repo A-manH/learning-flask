@@ -2,11 +2,19 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
+SPORTS = ["Soccer", "Basketball", "Swimming", "Golf", "Tennis",]
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", sports=SPORTS)
 
 @app.route("/register", methods=["POST"])
 def success():
-    print(request.form)
+    if not request.form.get("name"):
+        return render_template("error.html", error="Input name field.")
+
+    if request.form.get("sport") not in SPORTS:
+        return render_template("error.html", error=f'KeyError; key "{request.form.get("sport")}" is not an associated sport')
     return render_template("success.html")
+
+
