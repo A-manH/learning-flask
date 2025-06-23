@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>home</title>
-    </head>
-    <body>
-        <h1>Hello {{name}}!</h1>
-        <form>
-            <input name="name" placholder="Enter Name" type="text">
-        </form>
-    </body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %} home {% endblock %}
+
+{% block body %}
+
+<h1>Nice to meet you! What's your name?</h1>
+    <form action="/greet" method="get">
+        <input name="name" placholder="Enter Name" type="text">
+        <button type="submit">Submit</button>
+    </form>
+    
+{% endblock %}
