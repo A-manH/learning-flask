@@ -1,10 +1,25 @@
 from flask import Flask, render_template, request
+import sqlite3
+
+from httpx import RequestError
 
 app = Flask(__name__)
 
 SPORTS = ["Soccer", "Basketball", "Swimming", "Golf", "Tennis",]
-REGISTRANTS = {}
 
+def get_db_connection():
+    return sqlite3.connect("sports_registration.db")
+
+# connection = get_db_connection()
+# connection = sqlite3.connect("sports_registration.db")
+# # cursor = connection.cursor()
+# cursor.execute("""
+#                 CREATE TABLE IF NOT EXISTS registrants(
+#                 id INTEGER PRIMARY KEY,
+#                name VARCHAR(20),
+#                sport VARCHAR(20)
+#                )
+# """)
 
 @app.route("/")
 def index():
@@ -18,13 +33,20 @@ def register():
         return render_template("error.html", error="Input name field.")
 
     sport = request.form.get("sport")
-    if request.form.get("sport") not in SPORTS:
+    if sport not in SPORTS:
         return render_template("error.html", error=f'KeyError; key "{request.form.get("sport")}" is not an associated sport')
     
-    REGISTRANTS[name] = sport
-    print(REGISTRANTS)
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("""INSERT INTO registrants (name, sport) VALUES(?,?)""", (name, sport))
+    connection.commit()
+    cursor.close()
     return render_template("success.html")
 
 @app.route("/registrants")
 def view_registrants():
-    return render_template("registrants.html", registrants=REGISTRANTS)
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    registrants = cursor.execute("""SELECT name, sport FROM registrants""").fetchall()
+    cursor.close()
+    return render_template("registrants.html", registrants=registrants)
