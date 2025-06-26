@@ -5,5 +5,14 @@ import sqlite3
 app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
-app.config[]
+app.config["SESSION_TYPE"] = "filesystem"
 
+def create_table():
+    connection = sqlite3.connect("books.db")
+    cursor = connection.cursor()
+    cursor.execute("""INSERT INTO books (title) VALUES (?), (?), (?), (?), (?)""",
+                ("To Kill a Mockingbird", "1984", "Pride and Prejudice", "The Great Gatsby", "Moby-Dick"))
+    connection.commit()
+    cursor.close()
+
+print(type(("hello",)))
