@@ -23,8 +23,11 @@ def get_db_connection():
 def index():
     return render_template("index.html")
 
-@app.route("/catalog")
+@app.route("/catalog" methods=["GET", "POST"])
 def catalog():
+    if request.method == "POST":
+        book_id = request.form.get("id")
+        
     connection = get_db_connection()
     cursor = connection.cursor()
     books = cursor.execute("""SELECT * FROM books""").fetchall()

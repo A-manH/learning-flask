@@ -5,9 +5,15 @@
 {% block body %}
     <h1>Book Catalog</h1>
     <ul>
-        {% for book in books %}
-        <h3>{{book[1]}}</li>
-        {% endfor %}
+        <form action="/catalog" method="post">
+            {% for book in books %}
+            <li>
+                <h3>{{book[1]}}</h3>
+                <input name="id" value={{book[0]}} type="hidden">
+                <button>Add to cart</button>
+            </li>
+            {% endfor %}
+        </form>
     </ul>
 
     
