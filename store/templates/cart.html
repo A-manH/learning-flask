@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}cart{% endblock %}
+
+{% block body %}
+
+    <h1>Your Cart</h1>
+
+    <table>
+        <thead>
+            <th>id</th>
+            <th>title</th>
+        </thead>
+        <tbody>
+            {% if cart %}
+                {% for book in cart %}
+                <tr>
+                    <td>{{book}}</td>
+                    <!-- <td>{{book[0]}}</td> -->
+                    <td>{{book[1]}}</td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

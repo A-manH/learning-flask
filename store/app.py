@@ -1,4 +1,3 @@
-from os import close
 from flask import Flask, render_template, redirect, request, session
 from flask_session import Session
 import sqlite3
@@ -10,12 +9,19 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 def create_table():
+    books_data = [
+    ("To Kill a Mockingbird",),  # Each tuple represents one row
+    ("1984",),
+    ("Pride and Prejudice",),
+    ("The Great Gatsby",),
+    ("Moby-Dick",)
+    ]
+    
     connection = sqlite3.connect("books.db")
     cursor = connection.cursor()
-    cursor.execute("""INSERT INTO books (title) VALUES (?), (?), (?), (?), (?)""",
-                ("To Kill a Mockingbird", "1984", "Pride and Prejudice", "The Great Gatsby", "Moby-Dick"))
+    cursor.executemany("INSERT INTO books (title) VALUES (?)", books_data)
     connection.commit()
-    cursor.close()
+    connection.close()
 
 def get_db_connection():
     return sqlite3.connect("books.db")
@@ -30,23 +36,37 @@ def index():
 
 @app.route("/catalog", methods=["GET", "POST"])
 def catalog():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
     if not "cart" in session:
         session["cart"] = []
 
     if request.method == "POST":
-        try:
-            book_id = request.form.get("id")
-            session["cart"].append(book_id)
+        book_id = request.form.get("id")
+        session["cart"].append(book_id)
+        cursor.execute("""DELETE FROM books WHERE id = ?""", (book_id,))
+    
+    books_table = cursor.execute("""SELECT * FROM books""").fetchall()
+    close_db_connection(connection)
+    return render_template("catalog.html", books_table=books_table)
 
-            connection = get_db_connection()
-            cursor = connection.cursor()
-            cursor.execute(f"""DELETE FROM books WHERE id = {book_id};""")
-            close_db_connection(connection)
-        except:
-            print("book_id does not exist")
-
+@app.route("/cart")
+def view_cart():
+    cart = session.get("cart")
     connection = get_db_connection()
     cursor = connection.cursor()
-    books = cursor.execute("""SELECT * FROM books""").fetchall()
+    cursor.execute("""SELECT * FROM books WHERE id IN (?)""", cart)
+    close_db_connection(connection)
+    return render_template("cart.html", cart=cart)
+
+@app.route("/reset")
+def reset():
+    session.clear()
+    connection = sqlite3.connect("books.db")
+    cursor = connection.cursor()
+    cursor.execute("""DELETE FROM books""")
+    connection.commit()
     connection.close()
-    return render_template("catalog.html", books=books)
+    create_table()
+    return redirect("/")
