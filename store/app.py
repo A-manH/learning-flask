@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 def create_table():
     connection = sqlite3.connect("books.db")
@@ -15,4 +16,17 @@ def create_table():
     connection.commit()
     cursor.close()
 
-print(type(("hello",)))
+def get_db_connection():
+    return sqlite3.connect("books.db")
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/catalog")
+def catalog():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    books = cursor.execute("""SELECT * FROM books""").fetchall()
+    connection.close()
+    return render_template("catalog.html", books=books)

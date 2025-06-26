@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}catalog{% endblock %}
+
+{% block body %}
+    <h1>Book Catalog</h1>
+    <ul>
+        {% for book in books %}
+        <h3>{{book[1]}}</li>
+        {% endfor %}
+    </ul>
+
+    
+{% endblock %}
