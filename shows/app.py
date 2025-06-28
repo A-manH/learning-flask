@@ -12,14 +12,13 @@ def index():
 def search():
     query = "%" + request.args.get("query") + "%"
 
-    connection = sqlite3.connect("show.db")
+    connection = sqlite3.connect("shows.db")
     cursor = connection.cursor()
-    query_results = cursor.execute("""
+    shows = cursor.execute("""
                    SELECT title FROM shows 
                         WHERE title LIKE ?
                    """, (query,)).fetchall()
     connection.commit()
     connection.close()
-    print(query_results)
 
-    return render_template("results.html", results=query_results)
+    return render_template("result.html", shows=shows)

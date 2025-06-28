@@ -5,9 +5,23 @@
 {% block body %}
 
     <h1>Search</h1>
-    <form action="/search" method="get">
-        <input type="search" name="query" placeholder="Search" autofocus>
-        <button>Enter</button>
-    </form>
+    <input type="text" placeholder="Enter Show Title" autofocus>
+
+    <ul>
+    </ul>
+    
+    <script>
+        input = document.querySelector("input");
+        input.addEventListener("input", async function(){
+            if (input.value === ""){
+                document.querySelector("ul").innerHTML = null;
+                return
+            }
+
+            let response = await fetch("/search?query=" + input.value);
+            let shows = await response.text();
+            document.querySelector("ul").innerHTML = shows;
+        })
+    </script>
 
 {% endblock %}
