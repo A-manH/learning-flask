@@ -3,7 +3,6 @@ import sqlite3
 
 app = Flask(__name__) 
 
-connection = sqlite3.connect("shows.db")
  
 @app.route("/")
 def index():
@@ -11,6 +10,16 @@ def index():
 
 @app.route("/search")
 def search():
-    query = request.args.get("query")
-    print(query)
-    return redirect("/")
+    query = "%" + request.args.get("query") + "%"
+
+    connection = sqlite3.connect("show.db")
+    cursor = connection.cursor()
+    query_results = cursor.execute("""
+                   SELECT title FROM shows 
+                        WHERE title LIKE ?
+                   """, (query,)).fetchall()
+    connection.commit()
+    connection.close()
+    print(query_results)
+
+    return render_template("results.html", results=query_results)
