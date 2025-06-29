@@ -1,9 +1,9 @@
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, jsonify
 import sqlite3
 
 app = Flask(__name__) 
 
- 
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -21,4 +21,4 @@ def search():
     connection.commit()
     connection.close()
 
-    return render_template("result.html", shows=shows)
+    return jsonify(shows)

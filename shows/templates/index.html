@@ -19,8 +19,9 @@
             }
 
             let response = await fetch("/search?query=" + input.value);
-            let shows = await response.text();
+            let shows = await response;
             document.querySelector("ul").innerHTML = shows;
+            console.log(shows);
         })
     </script>
 
